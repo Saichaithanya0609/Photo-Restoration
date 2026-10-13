@@ -1,0 +1,5 @@
+opencv-python
+numpy
+matplotlib
+# Optional, only if you use SSIM:
+# scikit-image
