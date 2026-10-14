@@ -1,12 +1,17 @@
 ﻿import { useEffect, useState } from "react";
 import "./Editor.css";
 
+const API_URL = "http://127.0.0.1:8000";
+
 const Editor = () => {
   const [originalUrl, setOriginalUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [resultUrl, setResultUrl] = useState("");
   const [fileName, setFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+
   const [settings, setSettings] = useState({
     contrast: 50,
     noiseReduction: 0,
@@ -14,45 +19,108 @@ const Editor = () => {
   });
 
   useEffect(() => {
-    if (!originalUrl) return undefined;
-    return () => URL.revokeObjectURL(originalUrl);
+    return () => {
+      if (originalUrl) URL.revokeObjectURL(originalUrl);
+    };
   }, [originalUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (resultUrl) URL.revokeObjectURL(resultUrl);
+    };
+  }, [resultUrl]);
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
+
     setError("");
     setNotice("");
+    setResultUrl("");
     setOriginalUrl("");
+    setSelectedFile(null);
     setFileName("");
-    setIsLoading(false);
+
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose a valid image file.");
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setError("Please choose a JPG, PNG, or WebP image.");
       event.target.value = "";
       return;
     }
+
+    setSelectedFile(file);
     setOriginalUrl(URL.createObjectURL(file));
     setFileName(file.name);
+  };
+
+  const handleProcess = async () => {
+    if (!selectedFile || isLoading) return;
+
     setIsLoading(true);
+    setError("");
+    setNotice("");
+    setResultUrl("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch(`${API_URL}/restore`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let message = "Image processing failed.";
+
+        try {
+          const data = await response.json();
+          message = data.detail || message;
+        } catch {
+          // Keep the default message if the response isn't JSON.
+        }
+
+        throw new Error(message);
+      }
+
+      const imageBlob = await response.blob();
+
+      if (!imageBlob.type.startsWith("image/")) {
+        throw new Error("The server did not return a valid image.");
+      }
+
+      const newResultUrl = URL.createObjectURL(imageBlob);
+      setResultUrl(newResultUrl);
+      setNotice("Processing completed! Compare the original and result.");
+    } catch (err) {
+      setError(
+        err.message === "Failed to fetch"
+          ? "Cannot connect to the backend. Check that FastAPI is running."
+          : err.message || "Something went wrong while processing the image.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDownloadOriginal = () => {
-    if (!originalUrl) return;
+  const downloadImage = (url, name) => {
+    if (!url) return;
+
     const link = document.createElement("a");
-    link.href = originalUrl;
-    link.download = fileName || "original-image";
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
     link.click();
-  };
-
-  const handleProcess = () => {
-    setNotice(
-      "Processing is not connected yet. Your original image has not been changed.",
-    );
+    link.remove();
   };
 
   const handleSettingChange = (event) => {
     const { name, value } = event.target;
-    setSettings((current) => ({ ...current, [name]: Number(value) }));
+
+    setSettings((current) => ({
+      ...current,
+      [name]: Number(value),
+    }));
   };
 
   return (
@@ -61,10 +129,11 @@ const Editor = () => {
         <p className="editor-eyebrow">Photo workspace</p>
         <h2 id="editor-title">Upload an image to get started</h2>
         <p>
-          Preview your original and choose enhancement settings. Processing will
-          be available when the image service is connected.
+          Upload an old photo, process it with the backend, and compare the
+          original with the enhanced result.
         </p>
       </div>
+
       <div className="editor-upload">
         <label className="upload-label" htmlFor="photo-upload">
           <span className="upload-icon" aria-hidden="true">
@@ -72,25 +141,30 @@ const Editor = () => {
           </span>
           <span>
             <strong>Choose a photo</strong>
-            <small>JPG, PNG, WebP or another browser-supported image</small>
+            <small>JPG, PNG, or WebP</small>
           </span>
         </label>
+
         <input
           id="photo-upload"
           className="file-input"
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           onChange={handleFileChange}
+          disabled={isLoading}
         />
+
         {fileName && (
           <span className="selected-file">Selected: {fileName}</span>
         )}
       </div>
+
       {error && (
         <p className="editor-message editor-error" role="alert">
           {error}
         </p>
       )}
+
       {notice && (
         <p className="editor-message editor-notice" role="status">
           {notice}
@@ -103,34 +177,23 @@ const Editor = () => {
             <h3>Original image</h3>
             <span>Input</span>
           </div>
+
           <div className={`image-stage${originalUrl ? " has-image" : ""}`}>
             {originalUrl ? (
-              <>
-                <img
-                  src={originalUrl}
-                  alt={`Original: ${fileName}`}
-                  onLoad={() => setIsLoading(false)}
-                  onError={() => {
-                    setIsLoading(false);
-                    setError(
-                      "This image could not be loaded. Please choose another file.",
-                    );
-                  }}
-                />
-                {isLoading && (
-                  <p className="stage-message">Loading image preview…</p>
-                )}
-              </>
+              <img src={originalUrl} alt={`Original: ${fileName}`} />
             ) : (
               <p className="stage-message">
                 Your selected photo will appear here.
               </p>
             )}
           </div>
+
           <button
             className="editor-button download-button"
             type="button"
-            onClick={handleDownloadOriginal}
+            onClick={() =>
+              downloadImage(originalUrl, fileName || "original.png")
+            }
             disabled={!originalUrl || isLoading}
           >
             Download original
@@ -142,6 +205,7 @@ const Editor = () => {
             <h3 id="controls-title">Enhancement controls</h3>
             <span>Settings</span>
           </div>
+
           <div className="editor-controls">
             <label className="range-control" htmlFor="contrast">
               <span>
@@ -156,9 +220,10 @@ const Editor = () => {
                 max="100"
                 value={settings.contrast}
                 onChange={handleSettingChange}
-                disabled={!originalUrl}
+                disabled={!selectedFile || isLoading}
               />
             </label>
+
             <label className="range-control" htmlFor="noiseReduction">
               <span>
                 <strong>Noise reduction</strong>
@@ -172,9 +237,10 @@ const Editor = () => {
                 max="100"
                 value={settings.noiseReduction}
                 onChange={handleSettingChange}
-                disabled={!originalUrl}
+                disabled={!selectedFile || isLoading}
               />
             </label>
+
             <label className="range-control" htmlFor="sharpening">
               <span>
                 <strong>Sharpening</strong>
@@ -188,22 +254,23 @@ const Editor = () => {
                 max="100"
                 value={settings.sharpening}
                 onChange={handleSettingChange}
-                disabled={!originalUrl}
+                disabled={!selectedFile || isLoading}
               />
             </label>
           </div>
+
           <button
             className="editor-button process-button"
             type="button"
             onClick={handleProcess}
-            disabled={!originalUrl || isLoading}
-            title="Image processing will be enabled when the backend is connected"
+            disabled={!selectedFile || isLoading}
           >
-            {isLoading ? "Loading image…" : "Process image"}
+            {isLoading ? "Processing image…" : "Process image"}
           </button>
+
           <p className="control-note">
-            Processing is not connected yet. Your selected settings are not
-            applied to the image.
+            The backend currently applies its default contrast enhancement. The
+            sliders are not connected to processing yet.
           </p>
         </section>
 
@@ -215,17 +282,29 @@ const Editor = () => {
             <h3>Enhanced result</h3>
             <span>Output</span>
           </div>
-          <div className="image-stage result-stage">
-            <p className="stage-message">
-              No processed result yet. The preview will appear here after
-              processing is connected.
-            </p>
+
+          <div
+            className={`image-stage result-stage${resultUrl ? " has-image" : ""}`}
+          >
+            {resultUrl ? (
+              <img src={resultUrl} alt="Processed photo" />
+            ) : (
+              <p className="stage-message">
+                Your processed photo will appear here.
+              </p>
+            )}
           </div>
+
           <button
             className="editor-button download-button"
             type="button"
-            disabled
-            title="Download will be available after an enhanced result exists"
+            onClick={() =>
+              downloadImage(
+                resultUrl,
+                `${fileName.replace(/\.[^.]+$/, "")}-restored.png`,
+              )
+            }
+            disabled={!resultUrl || isLoading}
           >
             Download image
           </button>
