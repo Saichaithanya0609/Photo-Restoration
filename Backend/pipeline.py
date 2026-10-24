@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 from image_processor import denoise_image
-from tharun.pipeline import restore_image
+from Restoration.pipeline import restore_image
 
 
 def process_image(
@@ -18,8 +18,9 @@ def process_image(
 ) -> np.ndarray:
     """Restore a BGR uint8 image and return a BGR uint8 image.
 
-    When selected, light denoising runs before Tharun's crack detection and
-    inpainting. Otherwise the original pixels go directly to restoration.
+    When selected, light denoising runs before the restoration package's
+    crack detection and inpainting. Otherwise the original pixels go directly
+    to restoration.
     No contrast or color enhancement is applied.
     """
     if image is None or not isinstance(image, np.ndarray) or image.size == 0:
@@ -35,7 +36,7 @@ def process_image(
         if working_image.shape != image.shape or working_image.dtype != np.uint8:
             raise ValueError("Denoising must return a uint8 image with the input dimensions.")
 
-    # Tharun's public API takes a PIL image and returns a RestorationResult.
+    # The restoration package takes a PIL image and returns a RestorationResult.
     working_rgb = cv2.cvtColor(working_image, cv2.COLOR_BGR2RGB)
     working_pil = Image.fromarray(working_rgb)
     restoration = restore_image(
@@ -43,7 +44,7 @@ def process_image(
         sensitivity=detection_sensitivity,
     )
     if not isinstance(restoration.image, Image.Image):
-        raise ValueError("Tharun's restoration pipeline returned an invalid image.")
+        raise ValueError("The restoration pipeline returned an invalid image.")
 
     restored_rgb = np.asarray(restoration.image.convert("RGB"))
     restored_bgr = cv2.cvtColor(restored_rgb, cv2.COLOR_RGB2BGR)

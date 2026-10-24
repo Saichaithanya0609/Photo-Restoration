@@ -9,7 +9,7 @@ Non-Local Means (NLM) denoising; it is off by default.
 1. `main.py` validates and decodes the upload into an OpenCV BGR image.
 2. `pipeline.py` optionally calls `image_processor.py` for NLM denoising.
 3. The root pipeline converts BGR to PIL RGB and calls
-   `tharun.pipeline.restore_image()` for damage detection, mask refinement,
+   `Restoration.pipeline.restore_image()` for damage detection, mask refinement,
    and inpainting.
 4. The result is converted back to BGR, encoded as PNG, saved with a unique
    filename in `outputs/`, and returned to the browser. No contrast
