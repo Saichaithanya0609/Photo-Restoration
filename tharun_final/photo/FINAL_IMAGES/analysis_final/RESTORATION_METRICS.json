@@ -1,0 +1,32 @@
+{
+  "11_inpainting_output_raw": {
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "shape": [
+      500,
+      475,
+      3
+    ]
+  },
+  "11a_grain_reduction_denoised": {
+    "dtype": "uint8",
+    "max": 254.0,
+    "min": 0.0,
+    "shape": [
+      500,
+      475,
+      3
+    ]
+  },
+  "12_final_restored_composite": {
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "shape": [
+      500,
+      475,
+      3
+    ]
+  }
+}

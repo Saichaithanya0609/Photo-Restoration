@@ -1,0 +1,229 @@
+{
+  "01_original_input": {
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "shape": [
+      500,
+      475,
+      3
+    ]
+  },
+  "02_grayscale_luminance": {
+    "coverage": 0.9999536842105263,
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 237489,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "03_smooth": {
+    "coverage": 1.0,
+    "dtype": "float32",
+    "max": 247.5625,
+    "min": 6.1875,
+    "nonzero_pixels": 237500,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "04_local_contrast": {
+    "coverage": 0.46661473684210525,
+    "dtype": "float32",
+    "max": 204.17355346679688,
+    "min": -114.21646118164062,
+    "nonzero_pixels": 110821,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "05a_symmetry_bright_response": {
+    "coverage": 0.8276421052631578,
+    "dtype": "float32",
+    "max": 210.625,
+    "min": 0.0,
+    "nonzero_pixels": 196565,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "05b_symmetry_candidates": {
+    "components": 292,
+    "coverage": 0.021583157894736842,
+    "dtype": "uint8",
+    "largest_component_pixels": 896,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 5126,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "05c_symmetry_seeds": {
+    "components": 37,
+    "coverage": 0.008273684210526315,
+    "dtype": "uint8",
+    "largest_component_pixels": 718,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 1965,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "05d_symmetry_hysteresis": {
+    "components": 26,
+    "coverage": 0.013886315789473684,
+    "dtype": "uint8",
+    "largest_component_pixels": 896,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 3298,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "05e_symmetry_closed": {
+    "coverage": 0.018286315789473685,
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 4343,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "06_frangi_ridges": {
+    "coverage": 0.02792421052631579,
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 6632,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "06a_frangi_vesselness": {
+    "coverage": 0.7857052631578947,
+    "dtype": "float32",
+    "max": 1.0,
+    "min": 0.0,
+    "nonzero_pixels": 186605,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "06b_frangi_binary": {
+    "components": 460,
+    "coverage": 0.03704421052631579,
+    "dtype": "uint8",
+    "largest_component_pixels": 633,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 8798,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "07_crack_mask": {
+    "components": 278,
+    "coverage": 0.03823578947368421,
+    "dtype": "uint8",
+    "largest_component_pixels": 1502,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 9081,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "07a_combined_crack_candidates": {
+    "components": 347,
+    "coverage": 0.03670315789473684,
+    "dtype": "uint8",
+    "largest_component_pixels": 1409,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 8717,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "08_dust_mask": {
+    "components": 154,
+    "coverage": 0.003911578947368421,
+    "dtype": "uint8",
+    "largest_component_pixels": 44,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 929,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "08a_dust_response": {
+    "components": 4,
+    "coverage": 0.9859031578947368,
+    "dtype": "float32",
+    "largest_component_pixels": 234143,
+    "max": 243.0,
+    "min": 0.0,
+    "nonzero_pixels": 234152,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "08b_dust_candidates": {
+    "components": 335,
+    "coverage": 0.019082105263157893,
+    "dtype": "uint8",
+    "largest_component_pixels": 1080,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 4532,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "09_damage_mask": {
+    "components": 316,
+    "coverage": 0.04094736842105263,
+    "dtype": "uint8",
+    "largest_component_pixels": 1502,
+    "max": 255.0,
+    "min": 0.0,
+    "nonzero_pixels": 9725,
+    "shape": [
+      500,
+      475
+    ]
+  },
+  "10_damage_overlay_red": {
+    "dtype": "uint8",
+    "max": 255.0,
+    "min": 0.0,
+    "shape": [
+      500,
+      475,
+      3
+    ]
+  }
+}
