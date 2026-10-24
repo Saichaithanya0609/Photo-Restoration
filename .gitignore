@@ -10,4 +10,4 @@ __pycache__/
 
 # Generated restoration results are local artifacts, not source files.
 Backend/outputs/*
-!Backend/outputs/README.txt
+!Backend/outputs/.gitkeep

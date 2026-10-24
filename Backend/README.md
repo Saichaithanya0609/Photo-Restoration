@@ -11,8 +11,9 @@ Non-Local Means (NLM) denoising; it is off by default.
 3. The root pipeline converts BGR to PIL RGB and calls
    `tharun.pipeline.restore_image()` for damage detection, mask refinement,
    and inpainting.
-4. The result is converted back to BGR, encoded as PNG, and returned to the
-   browser. No contrast enhancement is applied in this flow.
+4. The result is converted back to BGR, encoded as PNG, saved with a unique
+   filename in `outputs/`, and returned to the browser. No contrast
+   enhancement is applied in this flow.
 
 ## Run locally
 
@@ -29,12 +30,5 @@ python -m uvicorn main:app --reload
 The API is available at `http://127.0.0.1:8000`; interactive API docs are at
 `http://127.0.0.1:8000/docs`.
 
-## Run the integration test
-
-```powershell
-python -m unittest test_backend_pipeline
-```
-
-This test checks stage ordering, BGR/PIL color conversion, and that denoising
-is skipped by default. Generated image and debug outputs are local artifacts
-under `outputs/` and are not committed.
+Each successful restoration is saved as `outputs/restored_<id>.png`. These
+generated files are local artifacts and are not committed to Git.

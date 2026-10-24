@@ -1,2 +1,2 @@
-Place a sample photograph in this folder when running the standalone denoising
-comparison script. The backend pipeline integration test uses in-memory images.
+Sample photographs for local development and manual restoration checks belong
+in this folder. The API accepts uploaded files and does not read from here.

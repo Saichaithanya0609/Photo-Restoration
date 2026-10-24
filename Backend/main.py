@@ -1,5 +1,7 @@
 
 from io import BytesIO
+from pathlib import Path
+from uuid import uuid4
 
 import cv2
 import numpy as np
@@ -10,10 +12,12 @@ from fastapi.responses import StreamingResponse
 
 from pipeline import process_image
 
+OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
+
 
 app = FastAPI(
     title="Photo Restoration API",
-    description="API for photo restoration and enhancement",
+    description="API for photo restoration",
     version="1.0.0",
 )
 
@@ -69,7 +73,7 @@ async def restore_photo(
         # 4. Run our pipeline
         result = process_image(image, denoise_enabled=remove_noise)
 
-        # 5. Encode the result as PNG
+        # 5. Encode and save the result under Backend/outputs.
         success, encoded_image = cv2.imencode(".png", result)
 
         if not success:
@@ -78,12 +82,17 @@ async def restore_photo(
                 detail="Could not encode the restored image.",
             )
 
+        png_bytes = encoded_image.tobytes()
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        output_name = f"restored_{uuid4().hex}.png"
+        (OUTPUT_DIR / output_name).write_bytes(png_bytes)
+
         # 6. Return the processed image
         return StreamingResponse(
-            BytesIO(encoded_image.tobytes()),
+            BytesIO(png_bytes),
             media_type="image/png",
             headers={
-                "Content-Disposition": 'inline; filename="restored.png"'
+                "Content-Disposition": 'inline; filename="restored.png"',
             },
         )
 

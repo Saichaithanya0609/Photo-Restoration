@@ -4,5 +4,4 @@ numpy
 opencv-python
 Pillow
 scikit-image
-matplotlib
 python-multipart
