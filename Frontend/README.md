@@ -1,118 +1,50 @@
-# Photo Restoration and Enhancement System
+# Photo Restoration Frontend
 
-A Digital Image Processing (DIP) project focused on improving the visual quality of old photographs using image-processing techniques.
+The frontend is a React single-page application built with Vite. It provides
+the project pages and an editor for uploading a photograph, previewing the
+original and restored images, choosing optional noise removal, and downloading
+the result.
 
-## Project Overview
+## Requirements
 
-Old photographs may suffer from fading, low contrast, noise, and loss of sharpness. This project aims to provide a simple interface where users can upload an image, enhance its quality using DIP algorithms, compare the original and processed images, and download the result.
+- Node.js
+- npm
+- The FastAPI backend running at `http://127.0.0.1:8000` for image processing
 
-## Current Progress
+## Install and run
 
-### Frontend
-
-The frontend is built using React and Vite.
-
-Completed so far:
-
-- Basic website layout and navigation.
-- Home page with project introduction.
-- About, Features, and Our Work pages.
-- Image upload interface.
-- Original image preview.
-- Enhancement settings interface for contrast, noise reduction, and sharpening.
-- Basic image download functionality for the original uploaded image.
-- Responsive styling for the current interface.
-
-**Current status:** The frontend prototype is in progress. The image-processing functionality has not yet been connected to the backend.
-
-## Planned Technologies
-
-- **Frontend:** React, Vite, JavaScript, CSS
-- **Backend:** Python, FastAPI
-- **Image Processing:** OpenCV, NumPy
-- **Version Control:** Git and GitHub
-
-## Planned Image Processing Techniques
-
-The following techniques are planned for implementation and testing:
-
-- **CLAHE:** To improve local contrast in faded or low-contrast photographs.
-- **Median Filtering:** To reduce suitable types of image noise.
-- **Image Sharpening:** To enhance edges and improve perceived clarity.
-- **Image Inpainting (optional):** To explore the removal of scratches or damaged regions if time permits.
-
-These techniques will be evaluated on sample images before being integrated into the application.
-
-## Project Workflow
-
-The intended workflow is:
-
-1. Upload an old photograph.
-2. Preview the original image.
-3. Select enhancement settings.
-4. Send the image to the FastAPI backend.
-5. Process the image using OpenCV and NumPy.
-6. Display the enhanced result alongside the original.
-7. Download the processed image.
-
-Steps involving backend processing and enhanced-image output are planned and are not implemented yet.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js and npm
-- Git
-
-### Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Saichaithanya0609/Photo-Restoration.git
-```
-
-Navigate to the frontend directory:
-
-```bash
-cd Photo-Restoration/Frontend
-```
-
-Install dependencies:
+From this directory:
 
 ```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Open the local URL displayed in your terminal.
+Open the local Vite development URL printed in the terminal, usually
+`http://localhost:5173`.
 
-## Team Collaboration
+## Available scripts
 
-The project is maintained on GitHub.
+```bash
+npm run dev      # Start Vite in development mode
+npm run build    # Create the production build in dist/
+npm run preview  # Preview the production build locally
+npm run lint     # Run ESLint
+```
 
-- `main`: Intended for stable, reviewed code.
-- `testing`: Shared branch for development and testing.
+## Backend connection
 
-Contributors should coordinate changes and avoid overwriting one another's work. Changes should be reviewed before being merged into `main`.
+The image editor sends a `multipart/form-data` request to
+`POST http://127.0.0.1:8000/restore`. It submits the selected file in the
+`file` field and the noise-removal checkbox in the `remove_noise` field. The
+backend returns a PNG image, which the editor displays and makes available for
+download.
 
-## Future Work
+The API base URL is currently defined as `API_URL` in
+`src/components/Editor.jsx`; it is not read from a Vite environment variable.
+If you change the backend address, update that constant and the allowed CORS
+origins in `Backend/main.py` to include the frontend's origin.
 
-- Set up the FastAPI backend.
-- Implement and test OpenCV image-processing algorithms.
-- Connect the React frontend to the backend.
-- Display original and enhanced images for comparison.
-- Implement downloading of processed images.
-- Test the application using different types of old and damaged photographs.
-- Document results and limitations.
-
-## Project Status
-
-**Current stage:** React frontend prototype and GitHub collaboration setup.
-
-The backend and actual image-enhancement algorithms are planned next.
+Supported upload types are JPEG, PNG, and WebP. Noise removal is off by
+default. Keep the backend running in a separate terminal while using the
+editor.
