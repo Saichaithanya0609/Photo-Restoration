@@ -42,7 +42,7 @@ Accepts `multipart/form-data`:
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `file` | JPEG, PNG, or WebP file | Yes | Photograph to restore |
-| `remove_noise` | Boolean | No | Run NLM denoising before detection; defaults to `false` |
+| `denoise` | Boolean | No | Run NLM denoising before detection; defaults to `false` |
 
 On success, returns the processed image as `image/png`. The API also writes a
 unique copy named `restored_<id>.png` into `Backend/outputs/`. Generated files
@@ -60,27 +60,35 @@ run this PowerShell command:
 ```powershell
 curl.exe -X POST "http://127.0.0.1:8000/restore" `
   -F "file=@test_images/image02.jpeg;type=image/jpeg" `
-  -F "remove_noise=false" `
+  -F "denoise=false" `
   --output outputs/manual_test.png
 ```
 
 Open `outputs/manual_test.png` to inspect the API response. The server also
 stores its own uniquely named copy in the same folder. To check denoising,
-repeat the request with `remove_noise=true`. The same request can be sent from
+repeat the request with `denoise=true`. The same request can be sent from
 Swagger UI at `/docs`.
 
-There are no automated backend test scripts in the current project. The
-commands above exercise the live upload endpoint; `Backend/test_images/`
-contains local sample images.
+Run the backend tests from this directory with:
+
+```powershell
+.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+`Backend/test_images/` also contains local sample images for manual endpoint checks.
 
 ## Processing flow
 
-1. `main.py` validates and decodes the uploaded image to an OpenCV BGR array.
-2. `pipeline.py` optionally runs NLM denoising through `image_processor.py`.
+1. `main.py` validates and decodes the upload to an OpenCV BGR array and reads
+   the `denoise` multipart boolean.
+2. `pipeline.py` runs NLM denoising through `image_processor.py` only when
+   `denoise=true`; otherwise it passes the decoded BGR image unchanged.
 3. The root pipeline converts BGR to PIL RGB and calls
    `Restoration.pipeline.restore_image()`.
 4. The `Restoration` package detects candidate damage, refines the mask, and
    inpaints masked regions.
-5. `main.py` encodes and saves the result, then returns the PNG response.
-
-No contrast enhancement is applied in the active flow.
+5. `pipeline.py` converts the restored PIL RGB image back to BGR and calls
+   `Restoration.enhance.enhance_full_photo()` once, with fading correction,
+   color balance, and sharpening enabled. Its denoising option stays disabled
+   so denoising remains controlled by the frontend checkbox.
+6. `main.py` encodes and saves the enhanced result, then returns the PNG response.

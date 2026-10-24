@@ -15,6 +15,7 @@ marked as damage, while faint or fragmented scratches can be missed.
 - Optionally run light Non-Local Means (NLM) denoising before damage detection.
   Denoising is off by default.
 - Detect crack-like regions, refine a binary mask, and inpaint masked pixels.
+- Apply fading correction, color balance, and sharpening after restoration.
 - Preview and download the restored PNG in the browser.
 - Save a uniquely named copy of each successful API result under
   `Backend/outputs/` for local review.
@@ -31,8 +32,9 @@ flowchart LR
     E --> F
     F --> G[Crack detection and mask refinement]
     G --> H[Localized inpainting]
-    H --> I[Encode and save PNG]
-    I --> J[React preview and download]
+    H --> I[Full-photo enhancement]
+    I --> J[Encode and save PNG]
+    J --> K[React preview and download]
 ```
 
 ## Sample restoration
@@ -106,10 +108,12 @@ Open the local Vite URL shown in the terminal, usually
 - `Frontend/` — React pages and the image editor.
 - `Backend/main.py` — FastAPI routes, upload validation, PNG response, and local
   output saving.
-- `Backend/pipeline.py` — denoising and restoration orchestration.
+- `Backend/pipeline.py` — checkbox-controlled denoising, restoration, and
+  enhancement orchestration.
 - `Backend/image_processor.py` — denoising algorithms; the API uses NLM when
   the user selects noise removal.
-- `Backend/Restoration/` — crack detection, mask refinement, and inpainting.
+- `Backend/Restoration/` — crack detection, mask refinement, inpainting, and
+  image enhancement.
 - `Backend/test_images/` — sample input photographs for development.
 - `Backend/outputs/` — generated restoration results; ignored by Git except for
   `.gitkeep`, which preserves the empty folder in a fresh checkout.

@@ -41,7 +41,7 @@ def home():
 @app.post("/restore")
 async def restore_photo(
     file: UploadFile = File(...),
-    remove_noise: bool = Form(False),
+    denoise: bool = Form(False),
 ):
     # 1. Validate the uploaded file type
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
@@ -71,7 +71,7 @@ async def restore_photo(
 
     try:
         # 4. Run our pipeline
-        result = process_image(image, denoise_enabled=remove_noise)
+        result = process_image(image, denoise_enabled=denoise)
 
         # 5. Encode and save the result under Backend/outputs.
         success, encoded_image = cv2.imencode(".png", result)

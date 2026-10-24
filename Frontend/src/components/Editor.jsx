@@ -11,7 +11,7 @@ const Editor = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [removeNoise, setRemoveNoise] = useState(false);
+  const [denoiseEnabled, setDenoiseEnabled] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -59,7 +59,7 @@ const Editor = () => {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
-      formData.append("remove_noise", String(removeNoise));
+      formData.append("denoise", String(denoiseEnabled));
 
       const response = await fetch(`${API_URL}/restore`, {
         method: "POST",
@@ -197,10 +197,10 @@ const Editor = () => {
             <label className="noise-option" htmlFor="remove-noise">
               <input
                 id="remove-noise"
-                name="remove_noise"
+                name="denoise"
                 type="checkbox"
-                checked={removeNoise}
-                onChange={(event) => setRemoveNoise(event.target.checked)}
+                checked={denoiseEnabled}
+                onChange={(event) => setDenoiseEnabled(event.target.checked)}
                 disabled={!selectedFile || isLoading}
               />
               <span>

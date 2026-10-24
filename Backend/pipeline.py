@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 
 from image_processor import denoise_image
+from Restoration.enhance import enhance_full_photo
 from Restoration.pipeline import restore_image
 
 
@@ -21,7 +22,8 @@ def process_image(
     When selected, light denoising runs before the restoration package's
     crack detection and inpainting. Otherwise the original pixels go directly
     to restoration.
-    No contrast or color enhancement is applied.
+    Full-photo contrast, color, and sharpening enhancement runs after
+    restoration, independently of the optional denoising choice.
     """
     if image is None or not isinstance(image, np.ndarray) or image.size == 0:
         raise ValueError("Input image is empty or invalid.")
@@ -51,4 +53,15 @@ def process_image(
     if restored_bgr.shape != image.shape:
         raise ValueError("Restoration changed the image dimensions unexpectedly.")
 
-    return restored_bgr
+    # Keep enhancement in the existing BGR uint8 format. Do not enable its
+    # optional denoising path; the frontend checkbox controls denoising above.
+    enhanced_bgr = enhance_full_photo(
+        restored_bgr,
+        fading=True,
+        color_restore=True,
+        sharpen_enabled=True,
+    )
+    if enhanced_bgr.shape != image.shape or enhanced_bgr.dtype != np.uint8:
+        raise ValueError("Enhancement must return a uint8 image with the input dimensions.")
+
+    return enhanced_bgr

@@ -36,7 +36,8 @@ npm run lint     # Run ESLint
 
 The image editor sends a `multipart/form-data` request to
 `POST http://127.0.0.1:8000/restore`. It submits the selected file in the
-`file` field and the noise-removal checkbox in the `remove_noise` field. The
+`file` field and the noise-removal checkbox in the `denoise` boolean field. It
+sends `true` when checked and `false` when unchecked. The
 backend returns a PNG image, which the editor displays and makes available for
 download.
 
