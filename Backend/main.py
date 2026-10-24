@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
 from pipeline import process_image
@@ -35,7 +35,10 @@ def home():
 
 
 @app.post("/restore")
-async def restore_photo(file: UploadFile = File(...)):
+async def restore_photo(
+    file: UploadFile = File(...),
+    remove_noise: bool = Form(False),
+):
     # 1. Validate the uploaded file type
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
         raise HTTPException(
@@ -64,7 +67,7 @@ async def restore_photo(file: UploadFile = File(...)):
 
     try:
         # 4. Run our pipeline
-        result = process_image(image)
+        result = process_image(image, denoise_enabled=remove_noise)
 
         # 5. Encode the result as PNG
         success, encoded_image = cv2.imencode(".png", result)

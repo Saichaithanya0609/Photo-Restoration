@@ -11,12 +11,7 @@ const Editor = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-
-  const [settings, setSettings] = useState({
-    contrast: 50,
-    noiseReduction: 0,
-    sharpening: 0,
-  });
+  const [removeNoise, setRemoveNoise] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -64,6 +59,7 @@ const Editor = () => {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
+      formData.append("remove_noise", String(removeNoise));
 
       const response = await fetch(`${API_URL}/restore`, {
         method: "POST",
@@ -114,15 +110,6 @@ const Editor = () => {
     link.remove();
   };
 
-  const handleSettingChange = (event) => {
-    const { name, value } = event.target;
-
-    setSettings((current) => ({
-      ...current,
-      [name]: Number(value),
-    }));
-  };
-
   return (
     <section className="editor-section" aria-labelledby="editor-title">
       <div className="editor-heading">
@@ -130,7 +117,7 @@ const Editor = () => {
         <h2 id="editor-title">Upload an image to get started</h2>
         <p>
           Upload an old photo, process it with the backend, and compare the
-          original with the enhanced result.
+          original with the restored result.
         </p>
       </div>
 
@@ -202,60 +189,24 @@ const Editor = () => {
 
         <section className="controls-panel" aria-labelledby="controls-title">
           <div className="panel-heading">
-            <h3 id="controls-title">Enhancement controls</h3>
-            <span>Settings</span>
+            <h3 id="controls-title">Processing option</h3>
+            <span>Optional</span>
           </div>
 
           <div className="editor-controls">
-            <label className="range-control" htmlFor="contrast">
-              <span>
-                <strong>Contrast enhancement</strong>
-                <output>{settings.contrast}%</output>
-              </span>
+            <label className="noise-option" htmlFor="remove-noise">
               <input
-                id="contrast"
-                name="contrast"
-                type="range"
-                min="0"
-                max="100"
-                value={settings.contrast}
-                onChange={handleSettingChange}
+                id="remove-noise"
+                name="remove_noise"
+                type="checkbox"
+                checked={removeNoise}
+                onChange={(event) => setRemoveNoise(event.target.checked)}
                 disabled={!selectedFile || isLoading}
               />
-            </label>
-
-            <label className="range-control" htmlFor="noiseReduction">
               <span>
-                <strong>Noise reduction</strong>
-                <output>{settings.noiseReduction}%</output>
+                <strong>Remove image noise</strong>
+                <small>Light denoising can reduce grain but may soften fine details.</small>
               </span>
-              <input
-                id="noiseReduction"
-                name="noiseReduction"
-                type="range"
-                min="0"
-                max="100"
-                value={settings.noiseReduction}
-                onChange={handleSettingChange}
-                disabled={!selectedFile || isLoading}
-              />
-            </label>
-
-            <label className="range-control" htmlFor="sharpening">
-              <span>
-                <strong>Sharpening</strong>
-                <output>{settings.sharpening}%</output>
-              </span>
-              <input
-                id="sharpening"
-                name="sharpening"
-                type="range"
-                min="0"
-                max="100"
-                value={settings.sharpening}
-                onChange={handleSettingChange}
-                disabled={!selectedFile || isLoading}
-              />
             </label>
           </div>
 
@@ -269,17 +220,17 @@ const Editor = () => {
           </button>
 
           <p className="control-note">
-            The backend currently applies its default contrast enhancement. The
-            sliders are not connected to processing yet.
+            Noise removal is off by default. Select it only when the photo has
+            visible grain or noise.
           </p>
         </section>
 
         <section
           className="preview-panel result-panel"
-          aria-label="Enhanced result preview"
+          aria-label="Restored result preview"
         >
           <div className="panel-heading">
-            <h3>Enhanced result</h3>
+            <h3>Restored result</h3>
             <span>Output</span>
           </div>
 

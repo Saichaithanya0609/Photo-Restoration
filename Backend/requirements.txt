@@ -1,5 +1,8 @@
-opencv-python
+fastapi
+uvicorn[standard]
 numpy
+opencv-python
+Pillow
+scikit-image
 matplotlib
-# Optional, only if you use SSIM:
-# scikit-image
+python-multipart
