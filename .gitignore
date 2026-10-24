@@ -1,36 +1,13 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Python virtual environment
+Backend/.venv/
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
-.venv/
-venv/
+
+# Environment variables
 .env
 
-# Environment files
-.env.*
-!.env.example
+# Generated restoration results are local artifacts, not source files.
+Backend/outputs/*
+!Backend/outputs/.gitkeep

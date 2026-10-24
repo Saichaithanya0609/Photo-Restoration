@@ -171,28 +171,29 @@
   gap: 19px;
   margin: 22px 0;
 }
-.range-control {
-  display: grid;
-  gap: 10px;
-}
-.range-control > span {
+.noise-option {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 11px;
   color: #344159;
   font-size: 0.86rem;
+  cursor: pointer;
 }
-.range-control output {
-  color: #3268df;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-}
-.range-control input {
-  width: 100%;
+.noise-option input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
   accent-color: #3268df;
 }
-.range-control input:disabled {
+.noise-option span {
+  display: grid;
+  gap: 5px;
+}
+.noise-option small {
+  color: #5d687b;
+  line-height: 1.5;
+}
+.noise-option input:disabled {
   opacity: 0.45;
 }
 .editor-button {
